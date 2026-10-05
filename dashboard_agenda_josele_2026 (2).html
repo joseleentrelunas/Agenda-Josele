@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Agenda Josele 2026 - Compraventa Definitiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            cyan: '#00F0FF',
+                            purple: '#9D00FF',
+                            pink: '#FF007F',
+                            lime: '#39FF14',
+                            dark: '#0B0F19',
+                            card: '#121826',
+                            border: '#1E293B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(18, 24, 38, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+            border-color: rgba(0, 240, 255, 0.5);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00F0FF; }
+    </style>
+</head>
+<body class="bg-cyber-dark text-slate-100 min-h-screen flex flex-col selection:bg-cyber-cyan selection:text-black">
+
+    <header class="glass-panel sticky top-0 z-40 border-b border-cyber-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyber-cyan to-cyber-purple p-0.5 flex items-center justify-center shadow-lg shadow-cyber-cyan/20">
+                    <div class="w-full h-full bg-cyber-dark rounded-[14px] flex items-center justify-center">
+                        <i class="fa-solid fa-house-chimney text-cyber-cyan text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-cyber-cyan via-white to-cyber-pink bg-clip-text text-transparent">
+                        Agenda Josele 2026
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Sistema Integral • Exclusivo Compraventa</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <button onclick="playSound(); manualSaveState()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 glow-hover transition flex items-center space-x-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-cyber-cyan"></i>
+                    <span class="hidden sm:inline">Guardar Cambios</span>
+                </button>
+                <button onclick="playSound(); exportBackupJSON()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 glow-hover transition" title="Exportar Backup JSON">
+                    <i class="fa-solid fa-download text-cyber-lime"></i>
+                </button>
+                <button onclick="playSound(); openAddModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyber-cyan to-blue-600 hover:from-cyber-cyan/90 hover:to-blue-500 text-black font-bold text-xs sm:text-sm shadow-lg shadow-cyber-cyan/20 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-plus text-black"></i>
+                    <span>Nuevo Inmueble</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-slate-900/60 border-b border-cyber-border py-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0 w-full md:w-auto">
+                <button onclick="playSound(); switchTab('entrelunas')" id="btnTabEntrelunas" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-cyber-cyan text-black shadow-lg shadow-cyber-cyan/20">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span>Entrelunas</span>
+                </button>
+                <button onclick="playSound(); switchTab('familia')" id="btnTabFamilia" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Familia</span>
+                </button>
+                <button onclick="playSound(); switchTab('personal')" id="btnTabPersonal" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Personal</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                <span class="text-xs text-slate-400 font-medium hidden sm:inline"><i class="fa-solid fa-circle text-cyber-lime text-[8px] mr-1.5"></i> Sincronizado</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- Tab Content: Entrelunas -->
+        <div id="viewEntrelunas" class="space-y-8">
+            
+            <!-- Quick Subcategories Pills -->
+            <div class="glass-panel p-4 rounded-2xl flex flex-wrap gap-2 items-center">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2"><i class="fa-solid fa-filter text-cyber-cyan mr-1"></i> Subcategorías:</span>
+                <button onclick="playSound(); filterSubcategory('all')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyber-cyan text-black transition">Todas</button>
+                <button onclick="playSound(); filterSubcategory('Clientes')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Clientes</button>
+                <button onclick="playSound(); filterSubcategory('Propietarios')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Propietarios</button>
+                <button onclick="playSound(); filterSubcategory('Inmuebles')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Inmuebles</button>
+                <button onclick="playSound(); filterSubcategory('Captaciones')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Captaciones</button>
+                <button onclick="playSound(); filterSubcategory('Visitas')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Visitas</button>
+                <button onclick="playSound(); filterSubcategory('Operaciones')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Operaciones</button>
+                <button onclick="playSound(); filterSubcategory('Contratos')" class="subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Contratos</button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-5 rounded-2xl glow-hover transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Cartera Compraventa</p>
+                        <h3 id="statTotal" class="text-3xl font-extrabold text-white mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-cyber-cyan/10 text-cyber-cyan flex items-center justify-center text-xl border border-cyber-cyan/20">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl glow-hover transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Disponibles Venta</p>
+                        <h3 id="statSale" class="text-3xl font-extrabold text-cyber-lime mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-cyber-lime/10 text-cyber-lime flex items-center justify-center text-xl border border-cyber-lime/20">
+                        <i class="fa-solid fa-tag"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl glow-hover transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Reservados / Vendidos</p>
+                        <h3 id="statSold" class="text-3xl font-extrabold text-cyber-pink mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-cyber-pink/10 text-cyber-pink flex items-center justify-center text-xl border border-cyber-pink/20">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl glow-hover transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Valor Cartera (€)</p>
+                        <h3 id="statValue" class="text-xl font-extrabold text-cyber-cyan mt-1">0 €</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-cyber-purple/10 text-cyber-purple flex items-center justify-center text-xl border border-cyber-purple/20">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filters Bar -->
+            <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="filterProperties()" placeholder="Buscar inmueble por título o ubicación..." class="w-full pl-11 pr-4 py-2.5 bg-slate-900/80 border border-cyber-border rounded-xl text-sm text-slate-100 focus:outline-none focus:border-cyber-cyan transition">
+                </div>
+                <div class="flex items-center space-x-3 w-full md:w-auto">
+                    <select id="filterStatus" onchange="filterProperties()" class="w-full md:w-auto px-4 py-2.5 bg-slate-900/80 border border-cyber-border rounded-xl text-sm text-slate-200 focus:outline-none focus:border-cyber-cyan transition">
+                        <option value="">Todos los estados</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Reservado">Reservado</option>
+                        <option value="Vendido">Vendido</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Properties Grid -->
+            <div id="propertyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 glass-panel rounded-2xl">
+                <div class="w-20 h-20 bg-slate-800 text-cyber-cyan rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border border-cyber-cyan/30">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-200">No hay inmuebles en esta vista</h3>
+                <p class="text-slate-400 text-sm mt-1">Prueba a cambiar el filtro o añade un nuevo inmueble de compraventa.</p>
+                <button onclick="playSound(); openAddModal()" class="mt-4 px-5 py-2.5 bg-cyber-cyan text-black font-bold rounded-xl text-sm transition">
+                    Añadir Inmueble
+                </button>
+            </div>
+
+            <!-- Analytics Section with Chart Type Selector -->
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-cyber-border pb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-cyber-cyan"></i> Análisis de Cartera de Compraventa
+                        </h3>
+                        <p class="text-xs text-slate-400">Distribución de estados y volúmenes de propiedades</p>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-xl border border-cyber-border">
+                        <button onclick="playSound(); setChartType('bar')" id="chartBtnBar" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyber-cyan text-black transition">Barras</button>
+                        <button onclick="playSound(); setChartType('line')" id="chartBtnLine" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Líneas</button>
+                        <button onclick="playSound(); setChartType('pie')" id="chartBtnPie" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">Quesito</button>
+                    </div>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="viewFamilia" class="hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-cyber-pink"></i> Sección Familia
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Citas, compromisos, cumpleaños, fechas importantes y planes familiares.</p>
+                </div>
+                <button onclick="playSound(); addGenericTask('familia')" class="px-4 py-2 bg-cyber-pink text-white text-xs font-bold rounded-xl shadow-lg shadow-cyber-pink/20">
+                    <i class="fa-solid fa-plus mr-1"></i> Añadir Nota/Cita
+                </button>
+            </div>
+            <div id="familiaList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <div id="viewPersonal" class="hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-cyber-purple"></i> Sección Personal
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Citas personales, gestiones administrativas, compras, finanzas y proyectos.</p>
+                </div>
+                <button onclick="playSound(); addGenericTask('personal')" class="px-4 py-2 bg-cyber-purple text-white text-xs font-bold rounded-xl shadow-lg shadow-cyber-purple/20">
+                    <i class="fa-solid fa-plus mr-1"></i> Añadir Tarea
+                </button>
+            </div>
+            <div id="personalList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+    </main>
+
+    <div id="propertyModal" class="fixed inset-0 bg-cyber-dark/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden border border-cyber-cyan/30 transform transition-all">
+            <div class="px-6 py-4 bg-slate-900 border-b border-cyber-border flex items-center justify-between">
+                <h3 id="modalTitle" class="text-lg font-bold text-white">Añadir Nuevo Inmueble (Compraventa)</h3>
+                <button onclick="playSound(); closeModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="propertyForm" onsubmit="saveProperty(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <input type="hidden" id="propId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Título del Inmueble *</label>
+                        <input type="text" id="propTitle" required placeholder="Ej. Piso luminoso centro" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Precio Compraventa (€) *</label>
+                        <input type="number" id="propPrice" required min="0" placeholder="Ej. 145000" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Superficie (m²) *</label>
+                        <input type="number" id="propArea" required min="0" placeholder="Ej. 90" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Habitaciones</label>
+                        <input type="number" id="propRooms" min="0" placeholder="Ej. 3" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Subcategoría</label>
+                        <select id="propSubcat" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                            <option value="Inmuebles">Inmuebles</option>
+                            <option value="Clientes">Clientes</option>
+                            <option value="Propietarios">Propietarios</option>
+                            <option value="Captaciones">Captaciones</option>
+                            <option value="Visitas">Visitas</option>
+                            <option value="Operaciones">Operaciones</option>
+                            <option value="Contratos">Contratos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Ubicación / Ciudad *</label>
+                        <input type="text" id="propLocation" required placeholder="Ej. Jerez de la Frontera" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Estado</label>
+                        <select id="propStatus" class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                            <option value="Disponible">Disponible</option>
+                            <option value="Reservado">Reservado</option>
+                            <option value="Vendido">Vendido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-cyber-border">
+                    <label class="block text-xs font-semibold text-slate-300 uppercase">Imagen del Inmueble</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <span class="text-xs text-slate-400 mb-1 block">Subir archivo</span>
+                            <input type="file" id="propFile" accept="image/*" onchange="handleImageUpload(event)" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyber-cyan/10 file:text-cyber-cyan hover:file:bg-cyber-cyan/20 cursor-pointer">
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400 mb-1 block">O enlace URL</span>
+                            <input type="url" id="propImage" placeholder="https://..." class="w-full px-4 py-2 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-center space-x-3">
+                        <div id="imagePreviewContainer" class="w-20 h-14 bg-slate-800 rounded-lg overflow-hidden border border-cyber-border hidden flex items-center justify-center">
+                            <img id="imagePreview" src="" alt="Vista previa" class="w-full h-full object-cover">
+                        </div>
+                        <span id="imagePreviewText" class="text-xs text-slate-400 italic">Ninguna imagen seleccionada</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Descripción detallada</label>
+                    <textarea id="propDescription" rows="3" placeholder="Calidades, extras, observaciones..." class="w-full px-4 py-2.5 bg-slate-900 border border-cyber-border rounded-xl text-sm text-white focus:outline-none focus:border-cyber-cyan"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-cyber-border">
+                    <button type="button" onclick="playSound(); closeModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-sm transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 bg-cyber-cyan hover:bg-cyber-cyan/90 text-black font-bold rounded-xl text-sm shadow-lg shadow-cyber-cyan/20 transition">
+                        Guardar Inmueble
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="fixed inset-0 bg-cyber-dark/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-4 border border-cyber-pink/40 shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-cyber-pink/10 text-cyber-pink flex items-center justify-center text-lg border border-cyber-pink/20">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 id="confirmTitle" class="text-lg font-bold text-white">Confirmar acción</h3>
+            </div>
+            <p id="confirmMessage" class="text-slate-300 text-sm">¿Estás seguro de que deseas eliminar este elemento?</p>
+            <div class="flex items-center justify-end space-x-3 pt-2">
+                <button id="confirmCancelBtn" onclick="closeConfirmModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">Cancelar</button>
+                <button id="confirmOkBtn" class="px-4 py-2 bg-cyber-pink hover:bg-cyber-pink/90 text-white rounded-xl text-xs font-bold shadow-lg shadow-cyber-pink/20 transition">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 glass-panel text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 border border-cyber-cyan/30">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-cyber-cyan text-lg"></i>
+        <span id="toastMessage" class="text-sm font-semibold">Operación realizada con éxito</span>
+    </div>
+
+    <script>
+        // Web Audio API Sound Synthesizer for Clicks & Interactions
+        let audioCtx = null;
+        function playSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {
+                // Audio Context fallback if blocked by browser policy
+            }
+        }
+
+        // State Data
+        let properties = [
+            {
+                id: 1,
+                title: "Ático Exclusivo Centro Histórico",
+                price: 185000,
+                area: 110,
+                rooms: 3,
+                location: "Jerez de la Frontera",
+                status: "Disponible",
+                subcat: "Inmuebles",
+                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&auto=format&fit=crop&q=80",
+                description: "Magnífico ático con vistas panorámicas y gran terraza privada."
+            },
+            {
+                id: 2,
+                title: "Chalet Independiente con Piscina",
+                price: 295000,
+                area: 220,
+                rooms: 4,
+                location: "El Puerto de Santa María",
+                status: "Reservado",
+                subcat: "Captaciones",
+                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=80",
+                description: "Espectacular chalet en parcela privada de 500m²."
+            },
+            {
+                id: 3,
+                title: "Piso Reformado Plaza del Caballo",
+                price: 138000,
+                area: 95,
+                rooms: 3,
+                location: "Jerez de la Frontera",
+                status: "Vendido",
+                subcat: "Operaciones",
+                image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&auto=format&fit=crop&q=80",
+                description: "Piso totalmente reformado, cocina equipada."
+            }
+        ];
+
+        let familiaTasks = [
+            { id: 101, title: "Cita pediatra Mateo", date: "2026-10-10", completed: false },
+            { id: 102, title: "Cena aniversario padres", date: "2026-10-15", completed: true },
+            { id: 103, title: "Cumpleaños sobrina Lucía", date: "2026-10-22", completed: false }
+        ];
+
+        let personalTasks = [
+            { id: 201, title: "Revisión médica anual", date: "2026-10-12", completed: false },
+            { id: 202, title: "Pago seguro coche", date: "2026-10-18", completed: true },
+            { id: 203, title: "Planificación trimestral finanzas", date: "2026-10-30", completed: false }
+        ];
+
+        let currentSubcategory = 'all';
+        let currentChartType = 'bar';
+        let chartInstance = null;
+
+        // Local Storage persistence
+        if (localStorage.getItem('agenda_josele_2026_db')) {
+            try {
+                const saved = JSON.parse(localStorage.getItem('agenda_josele_2026_db'));
+                properties = saved.properties || properties;
+                familiaTasks = saved.familiaTasks || familiaTasks;
+                personalTasks = saved.personalTasks || personalTasks;
+            } catch (e) {
+                console.error("Error loading localStorage", e);
+            }
+        }
+
+        function saveToStorage() {
+            const payload = { properties, familiaTasks, personalTasks };
+            localStorage.setItem('agenda_josele_2026_db', JSON.stringify(payload));
+        }
+
+        function manualSaveState() {
+            saveToStorage();
+            showToast("¡Cambios guardados correctamente en la agenda!");
+        }
+
+        function exportBackupJSON() {
+            const payload = { properties, familiaTasks, personalTasks, exportDate: new Date().toISOString() };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `agenda_josele_2026_backup_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Copia de seguridad JSON descargada con éxito");
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toastIcon.className = type === 'success' ? "fa-solid fa-circle-check text-cyber-cyan text-lg" : "fa-solid fa-circle-exclamation text-cyber-pink text-lg";
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Custom Confirmation Dialog Helper (No window.confirm blocking)
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            const okBtn = document.getElementById('confirmOkBtn');
+            const newOkBtn = okBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+
+            newOkBtn.addEventListener('click', () => {
+                playSound();
+                closeConfirmModal();
+                onConfirm();
+            });
+
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        // Navigation Tabs
+        function switchTab(tab) {
+            ['entrelunas', 'familia', 'personal'].forEach(t => {
+                document.getElementById('view' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+                document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1)).className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-800 text-slate-300 hover:bg-slate-700";
+            });
+
+            document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+            const activeBtn = document.getElementById('btnTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            
+            if (tab === 'entrelunas') activeBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-cyber-cyan text-black shadow-lg shadow-cyber-cyan/20";
+            if (tab === 'familia') activeBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-cyber-pink text-white shadow-lg shadow-cyber-pink/20";
+            if (tab === 'personal') activeBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-cyber-purple text-white shadow-lg shadow-cyber-purple/20";
+        }
+
+        // Subcategory Filter
+        function filterSubcategory(subcat) {
+            currentSubcategory = subcat;
+            document.querySelectorAll('.subcat-btn').forEach(btn => {
+                if (btn.textContent.trim().toLowerCase() === subcat.toLowerCase() || (subcat === 'all' && btn.textContent.trim() === 'Todas')) {
+                    btn.className = "subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyber-cyan text-black transition";
+                } else {
+                    btn.className = "subcat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+                }
+            });
+            renderProperties();
+        }
+
+        // Image Upload Helper
+        let tempUploadedImage = "";
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempUploadedImage = e.target.result;
+                    document.getElementById('propImage').value = tempUploadedImage;
+                    document.getElementById('imagePreview').src = tempUploadedImage;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                    document.getElementById('imagePreviewText').textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Modal Management
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = "Añadir Nuevo Inmueble (Compraventa)";
+            document.getElementById('propertyForm').reset();
+            document.getElementById('propId').value = "";
+            tempUploadedImage = "";
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('imagePreviewText').textContent = "Ninguna imagen seleccionada";
+            document.getElementById('propertyModal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            document.getElementById('modalTitle').textContent = "Editar Inmueble (Compraventa)";
+            document.getElementById('propId').value = prop.id;
+            document.getElementById('propTitle').value = prop.title;
+            document.getElementById('propPrice').value = prop.price;
+            document.getElementById('propArea').value = prop.area;
+            document.getElementById('propRooms').value = prop.rooms || '';
+            document.getElementById('propSubcat').value = prop.subcat || 'Inmuebles';
+            document.getElementById('propLocation').value = prop.location;
+            document.getElementById('propStatus').value = prop.status;
+            document.getElementById('propImage').value = prop.image || '';
+            document.getElementById('propDescription').value = prop.description || '';
+            tempUploadedImage = prop.image || '';
+
+            if (prop.image) {
+                document.getElementById('imagePreview').src = prop.image;
+                document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                document.getElementById('imagePreviewText').textContent = "Imagen actual cargada";
+            } else {
+                document.getElementById('imagePreviewContainer').classList.add('hidden');
+                document.getElementById('imagePreviewText').textContent = "Ninguna imagen seleccionada";
+            }
+
+            document.getElementById('propertyModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('propertyModal').classList.add('hidden');
+        }
+
+        function toggleStatus(id, newStatus) {
+            const prop = properties.find(p => p.id === id);
+            if (prop) {
+                prop.status = newStatus;
+                saveToStorage();
+                renderProperties();
+                updateStats();
+                updateChart();
+                showToast(`Estado cambiado a: ${newStatus}`);
+            }
+        }
+
+        function saveProperty(event) {
+            event.preventDefault();
+            const id = document.getElementById('propId').value;
+            const title = document.getElementById('propTitle').value.trim();
+            const price = parseFloat(document.getElementById('propPrice').value);
+            const area = parseFloat(document.getElementById('propArea').value);
+            const rooms = parseInt(document.getElementById('propRooms').value) || 0;
+            const subcat = document.getElementById('propSubcat').value;
+            const location = document.getElementById('propLocation').value.trim();
+            const status = document.getElementById('propStatus').value;
+            const imageInput = document.getElementById('propImage').value.trim();
+            const image = imageInput || tempUploadedImage || 'https://placehold.co/600x400/121826/00F0FF?text=Inmueble+Compraventa';
+            const description = document.getElementById('propDescription').value.trim();
+
+            if (id) {
+                const index = properties.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    properties[index] = { id: Number(id), title, price, area, rooms, subcat, location, status, image, description };
+                    showToast("Inmueble actualizado correctamente");
+                }
+            } else {
+                properties.unshift({ id: Date.now(), title, price, area, rooms, subcat, location, status, image, description });
+                showToast("Inmueble añadido con éxito");
+            }
+
+            saveToStorage();
+            closeModal();
+            renderProperties();
+            updateStats();
+            updateChart();
+        }
+
+        function deleteProperty(id) {
+            showConfirmModal(
+                "Eliminar Inmueble",
+                "¿Estás seguro de que deseas eliminar este inmueble de la agenda? Esta acción no se puede deshacer.",
+                () => {
+                    properties = properties.filter(p => p.id !== id);
+                    saveToStorage();
+                    renderProperties();
+                    updateStats();
+                    updateChart();
+                    showToast("Inmueble eliminado con éxito", "success");
+                }
+            );
+        }
+
+        // Generic Tasks Management for Familia / Personal
+        function addGenericTask(type) {
+            const title = prompt("Introduce el título de la tarea o cita:");
+            if (!title) return;
+            const newTask = { id: Date.now(), title, date: "2026-10-15", completed: false };
+            if (type === 'familia') {
+                familiaTasks.unshift(newTask);
+            } else {
+                personalTasks.unshift(newTask);
+            }
+            saveToStorage();
+            renderTasks();
+            showToast("Nueva tarea añadida");
+        }
+
+        function toggleTask(type, id) {
+            if (type === 'familia') {
+                const t = familiaTasks.find(x => x.id === id);
+                if (t) t.completed = !t.completed;
+            } else {
+                const t = personalTasks.find(x => x.id === id);
+                if (t) t.completed = !t.completed;
+            }
+            saveToStorage();
+            renderTasks();
+        }
+
+        function deleteGenericTask(type, id) {
+            showConfirmModal(
+                "Eliminar Tarea",
+                "¿Estás seguro de que deseas eliminar esta tarea de la agenda?",
+                () => {
+                    if (type === 'familia') {
+                        familiaTasks = familiaTasks.filter(x => x.id !== id);
+                    } else {
+                        personalTasks = personalTasks.filter(x => x.id !== id);
+                    }
+                    saveToStorage();
+                    renderTasks();
+                    showToast("Tarea eliminada con éxito");
+                }
+            );
+        }
+
+        function renderTasks() {
+            // Familia
+            const famContainer = document.getElementById('familiaList');
+            famContainer.innerHTML = '';
+            familiaTasks.forEach(t => {
+                const div = document.createElement('div');
+                div.className = "glass-panel p-4 rounded-2xl flex items-center justify-between";
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="playSound(); toggleTask('familia', ${t.id})" class="w-5 h-5 rounded border-cyber-border text-cyber-pink focus:ring-cyber-pink bg-slate-900 cursor-pointer">
+                        <div>
+                            <p class="text-sm font-semibold ${t.completed ? 'line-through text-slate-500' : 'text-slate-200'}">${t.title}</p>
+                            <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${t.date}</span>
+                        </div>
+                    </div>
+                    <button onclick="playSound(); deleteGenericTask('familia', ${t.id})" class="text-slate-500 hover:text-cyber-pink p-2"><i class="fa-solid fa-trash-can"></i></button>
+                `;
+                famContainer.appendChild(div);
+            });
+
+            // Personal
+            const perContainer = document.getElementById('personalList');
+            perContainer.innerHTML = '';
+            personalTasks.forEach(t => {
+                const div = document.createElement('div');
+                div.className = "glass-panel p-4 rounded-2xl flex items-center justify-between";
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="playSound(); toggleTask('personal', ${t.id})" class="w-5 h-5 rounded border-cyber-border text-cyber-purple focus:ring-cyber-purple bg-slate-900 cursor-pointer">
+                        <div>
+                            <p class="text-sm font-semibold ${t.completed ? 'line-through text-slate-500' : 'text-slate-200'}">${t.title}</p>
+                            <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar mr-1"></i> ${t.date}</span>
+                        </div>
+                    </div>
+                    <button onclick="playSound(); deleteGenericTask('personal', ${t.id})" class="text-slate-500 hover:text-cyber-purple p-2"><i class="fa-solid fa-trash-can"></i></button>
+                `;
+                perContainer.appendChild(div);
+            });
+        }
+
+        // Stats Update
+        function updateStats() {
+            document.getElementById('statTotal').textContent = properties.length;
+            document.getElementById('statSale').textContent = properties.filter(p => p.status === 'Disponible').length;
+            document.getElementById('statSold').textContent = properties.filter(p => p.status === 'Reservado' || p.status === 'Vendido').length;
+            const totalVal = properties.reduce((acc, p) => acc + p.price, 0);
+            document.getElementById('statValue').textContent = totalVal.toLocaleString('es-ES') + ' €';
+        }
+
+        // Filter and Render Grid
+        function filterProperties() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            const filtered = properties.filter(p => {
+                const matchesQuery = p.title.toLowerCase().includes(query) || p.location.toLowerCase().includes(query);
+                const matchesStatus = filterStatus === "" || p.status === filterStatus;
+                const matchesSubcat = currentSubcategory === 'all' || p.subcat === currentSubcategory;
+                return matchesQuery && matchesStatus && matchesSubcat;
+            });
+
+            renderGrid(filtered);
+        }
+
+        function renderProperties() {
+            filterProperties();
+        }
+
+        function renderGrid(data) {
+            const grid = document.getElementById('propertyGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            data.forEach(p => {
+                let badgeColor = 'bg-cyber-lime/10 text-cyber-lime border-cyber-lime/30';
+                if (p.status === 'Reservado') badgeColor = 'bg-amber-400/10 text-amber-300 border-amber-400/30';
+                if (p.status === 'Vendido') badgeColor = 'bg-cyber-pink/10 text-cyber-pink border-cyber-pink/30';
+
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-2xl overflow-hidden glow-hover transition flex flex-col justify-between border border-cyber-border";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-48 bg-slate-900">
+                            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/121826/00F0FF?text=Inmueble+Josele'">
+                            <div class="absolute top-3 left-3 flex gap-2">
+                                <span class="bg-cyber-cyan text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow uppercase">Compraventa</span>
+                                <span class="${badgeColor} border text-[10px] font-bold px-2.5 py-1 rounded-lg shadow">${p.status}</span>
+                            </div>
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-slate-900/80 backdrop-blur-md text-slate-300 text-[10px] font-semibold px-2 py-1 rounded-lg border border-cyber-border">${p.subcat || 'Inmuebles'}</span>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-medium flex items-center gap-1">
+                                    <i class="fa-solid fa-location-dot text-cyber-cyan"></i> ${p.location}
+                                </span>
+                                <span class="text-xl font-extrabold text-cyber-cyan">
+                                    ${p.price.toLocaleString('es-ES')} €
+                                </span>
+                            </div>
+                            <h3 class="text-base font-bold text-slate-100 line-clamp-1">${p.title}</h3>
+                            <p class="text-slate-400 text-xs line-clamp-2">${p.description || 'Sin descripción detallada.'}</p>
+                            
+                            <div class="flex items-center space-x-4 pt-3 border-t border-cyber-border text-xs text-slate-300 font-medium">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-combined text-cyber-cyan"></i> ${p.area} m²</span>
+                                ${p.rooms ? `<span class="flex items-center gap-1.5"><i class="fa-solid fa-bed text-cyber-purple"></i> ${p.rooms} hab.</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-5 py-3 bg-slate-900/60 border-t border-cyber-border flex items-center justify-between">
+                        <div class="flex items-center space-x-1">
+                            ${p.status !== 'Vendido' ? `
+                                <button onclick="playSound(); toggleStatus(${p.id}, 'Vendido')" class="text-xs bg-cyber-pink/10 hover:bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/30 font-semibold px-2.5 py-1.5 rounded-xl transition" title="Marcar como Vendido">
+                                    <i class="fa-solid fa-handshake mr-1"></i> Vendido
+                                </button>
+                            ` : `
+                                <button onclick="playSound(); toggleStatus(${p.id}, 'Disponible')" class="text-xs bg-cyber-lime/10 hover:bg-cyber-lime/20 text-cyber-lime border border-cyber-lime/30 font-semibold px-2.5 py-1.5 rounded-xl transition" title="Marcar Disponible">
+                                    <i class="fa-solid fa-rotate-left mr-1"></i> Disponible
+                                </button>
+                            `}
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="playSound(); openEditModal(${p.id})" class="p-2 text-slate-400 hover:text-cyber-cyan hover:bg-slate-800 rounded-xl transition" title="Editar">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="playSound(); deleteProperty(${p.id})" class="p-2 text-slate-400 hover:text-cyber-pink hover:bg-slate-800 rounded-xl transition" title="Eliminar">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Chart.js Analytics Integration
+        function setChartType(type) {
+            currentChartType = type;
+            ['bar', 'line', 'pie'].forEach(t => {
+                const btn = document.getElementById('chartBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (t === type) {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyber-cyan text-black transition";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition";
+                }
+            });
+            updateChart();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            const disp = properties.filter(p => p.status === 'Disponible').length;
+            const res = properties.filter(p => p.status === 'Reservado').length;
+            const vend = properties.filter(p => p.status === 'Vendido').length;
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const chartConfig = {
+                type: currentChartType === 'pie' ? 'doughnut' : currentChartType,
+                data: {
+                    labels: ['Disponible', 'Reservado', 'Vendido'],
+                    datasets: [{
+                        label: 'Inmuebles',
+                        data: [disp, res, vend],
+                        backgroundColor: ['#39FF14', '#F59E0B', '#FF007F'],
+                        borderColor: '#1E293B',
+                        borderWidth: 2,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94A3B8', font: { family: 'Inter', size: 12 } }
+                        }
+                    },
+                    scales: currentChartType === 'pie' ? {} : {
+                        x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#94A3B8', precision: 0 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            };
+
+            chartInstance = new Chart(ctx, chartConfig);
+        }
+
+        // Initial Load on Window Startup
+        window.onload = function() {
+            renderProperties();
+            renderTasks();
+            updateStats();
+            updateChart();
+        };
+    </script>
+</body>
+</html>
